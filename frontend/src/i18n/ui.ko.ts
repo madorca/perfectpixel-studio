@@ -48,6 +48,7 @@ const ko: Record<string, string> = {
   language: "언어",
   help_gemini: "Google AI Studio에서 발급받은 키를 입력하세요.",
   help_openai: "OpenAI Platform에서 발급받은 키를 입력하세요. (.env의 OPENAI_API_KEY도 자동 인식)",
+  help_codex: "로컬 Codex 로그인 상태(~/.codex/auth.json)를 사용합니다. 사용할 수 없으면 codex login을 먼저 실행하세요.",
   help_openrouter: "openrouter.ai → Keys에서 발급받은 키를 입력하세요.",
   help_fal: "fal.ai 대시보드에서 발급받은 키를 입력하세요. (.env의 FAL_KEY도 자동 인식)",
   help_byteplus: "BytePlus ModelArk 콘솔에서 발급받은 API 키를 입력하세요. (.env의 BYTEPLUS_API_KEY / ARK_API_KEY도 자동 인식)",

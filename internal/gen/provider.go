@@ -14,13 +14,14 @@ import (
 const (
 	ProviderGemini     = "gemini"
 	ProviderOpenAI     = "openai"
+	ProviderCodex      = "codex"
 	ProviderOpenRouter = "openrouter"
 	ProviderFal        = "fal"
 	ProviderBytePlus   = "byteplus"
 )
 
 // SupportedProviders는 지원 프로바이더 식별자 목록입니다 (UI 노출 순서).
-var SupportedProviders = []string{ProviderGemini, ProviderOpenAI, ProviderOpenRouter, ProviderFal, ProviderBytePlus}
+var SupportedProviders = []string{ProviderGemini, ProviderOpenAI, ProviderCodex, ProviderOpenRouter, ProviderFal, ProviderBytePlus}
 
 // modelCatalog는 프로바이더별 선택 가능한 이미지 모델 목록입니다 (최신 모델이 맨 앞).
 var modelCatalog = map[string][]string{
@@ -30,6 +31,12 @@ var modelCatalog = map[string][]string{
 		"gemini-2.5-flash-image", // Nano Banana
 	},
 	ProviderOpenAI: {
+		"gpt-image-2",
+		"gpt-image-1.5",
+		"gpt-image-1",
+		"gpt-image-1-mini",
+	},
+	ProviderCodex: {
 		"gpt-image-2",
 		"gpt-image-1.5",
 		"gpt-image-1",
@@ -72,7 +79,7 @@ type Provider interface {
 // DefaultModelFor는 프로바이더별 기본 모델을 반환합니다.
 func DefaultModelFor(provider string) string {
 	switch provider {
-	case ProviderOpenAI:
+	case ProviderOpenAI, ProviderCodex:
 		return "gpt-image-2"
 	case ProviderOpenRouter:
 		return "google/gemini-3-pro-image-preview"
@@ -90,6 +97,8 @@ func ProviderLabel(provider string) string {
 	switch provider {
 	case ProviderOpenAI:
 		return "OpenAI"
+	case ProviderCodex:
+		return "Codex Local"
 	case ProviderOpenRouter:
 		return "OpenRouter"
 	case ProviderFal:
@@ -111,6 +120,8 @@ func New(provider, apiKey, model string) (Provider, error) {
 		return NewClient(apiKey, model), nil
 	case ProviderOpenAI:
 		return NewOpenAI(apiKey, model), nil
+	case ProviderCodex:
+		return NewCodexImages(model), nil
 	case ProviderOpenRouter:
 		return NewOpenRouter(apiKey, model), nil
 	case ProviderFal:

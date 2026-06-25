@@ -11,7 +11,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -255,20 +254,8 @@ func openAISizeFor(aspectRatio string) string {
 	if w == h {
 		return "1024x1024"
 	}
-	const maxEdge = 1792
-	var pw, ph int
 	if w > h {
-		pw = maxEdge
-		ph = int(float64(maxEdge) * float64(h) / float64(w))
-	} else {
-		ph = maxEdge
-		pw = int(float64(maxEdge) * float64(w) / float64(h))
+		return "1536x1024"
 	}
-	round16 := func(v int) int {
-		if v < 640 {
-			v = 640
-		}
-		return (v / 16) * 16
-	}
-	return strconv.Itoa(round16(pw)) + "x" + strconv.Itoa(round16(ph))
+	return "1024x1536"
 }

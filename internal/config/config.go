@@ -20,6 +20,7 @@ type Settings struct {
 	Provider   string      `json:"provider"` // gemini | openai | openrouter | fal | byteplus
 	Gemini     ProviderCfg `json:"gemini"`
 	OpenAI     ProviderCfg `json:"openai"`
+	Codex      ProviderCfg `json:"codex"`
 	OpenRouter ProviderCfg `json:"openrouter"`
 	Fal        ProviderCfg `json:"fal"`
 	BytePlus   ProviderCfg `json:"byteplus"`
@@ -34,6 +35,8 @@ func (s *Settings) Cfg(provider string) *ProviderCfg {
 	switch provider {
 	case "openai":
 		return &s.OpenAI
+	case "codex":
+		return &s.Codex
 	case "openrouter":
 		return &s.OpenRouter
 	case "fal":
@@ -111,6 +114,8 @@ func Load() Settings {
 	// 활성 프로바이더 자동 선택: 키가 있는 첫 프로바이더
 	if s.Provider == "" {
 		switch {
+		case codexAuthAvailable():
+			s.Provider = "codex"
 		case s.Gemini.APIKey != "":
 			s.Provider = "gemini"
 		case s.OpenAI.APIKey != "":
@@ -126,6 +131,27 @@ func Load() Settings {
 		}
 	}
 	return s
+}
+
+func codexAuthAvailable() bool {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return false
+	}
+	data, err := os.ReadFile(filepath.Join(home, ".codex", "auth.json"))
+	if err != nil {
+		return false
+	}
+	var raw map[string]any
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return false
+	}
+	src := raw
+	if tokens, ok := raw["tokens"].(map[string]any); ok {
+		src = tokens
+	}
+	token, _ := src["access_token"].(string)
+	return token != ""
 }
 
 // Save는 설정을 저장합니다 (0600 권한).

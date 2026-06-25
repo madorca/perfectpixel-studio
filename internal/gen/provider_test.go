@@ -15,6 +15,7 @@ func TestNewFactory(t *testing.T) {
 		{"gemini", "*gen.Client"},
 		{"", "*gen.Client"},
 		{"openai", "*gen.OpenAI"},
+		{"codex", "*gen.CodexImages"},
 		{"openrouter", "*gen.OpenRouter"},
 		{"fal", "*gen.Fal"},
 		{"byteplus", "*gen.BytePlus"},
@@ -39,6 +40,8 @@ func typeName(v any) string {
 		return "*gen.Client"
 	case *OpenAI:
 		return "*gen.OpenAI"
+	case *CodexImages:
+		return "*gen.CodexImages"
 	case *OpenRouter:
 		return "*gen.OpenRouter"
 	case *Fal:
@@ -101,11 +104,14 @@ func TestOpenAISizeFor(t *testing.T) {
 	if got := openAISizeFor("1:1"); got != "1024x1024" {
 		t.Fatalf("정사각 크기 오류: %s", got)
 	}
-	if got := openAISizeFor("16:9"); got != "1792x1008" {
+	if got := openAISizeFor("16:9"); got != "1536x1024" {
 		t.Fatalf("16:9 크기 오류: %s", got)
 	}
-	if got := openAISizeFor("21:9"); got != "1792x768" {
+	if got := openAISizeFor("21:9"); got != "1536x1024" {
 		t.Fatalf("21:9 크기 오류: %s", got)
+	}
+	if got := openAISizeFor("9:16"); got != "1024x1536" {
+		t.Fatalf("9:16 size = %s", got)
 	}
 }
 

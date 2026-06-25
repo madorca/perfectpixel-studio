@@ -48,6 +48,7 @@ const en: Record<string, string> = {
   language: "Language",
   help_gemini: "Enter the key issued from Google AI Studio.",
   help_openai: "Enter the key issued from OpenAI Platform. (OPENAI_API_KEY in .env is auto-detected.)",
+  help_codex: "Uses your local Codex login from ~/.codex/auth.json. Run codex login first if it is not available.",
   help_openrouter: "Enter the key from openrouter.ai → Keys.",
   help_fal: "Enter the key from your fal.ai dashboard. (FAL_KEY in .env is auto-detected.)",
   help_byteplus: "Enter the API key from the BytePlus ModelArk console. (BYTEPLUS_API_KEY / ARK_API_KEY in .env are auto-detected.)",

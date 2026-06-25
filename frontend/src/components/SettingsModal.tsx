@@ -30,6 +30,7 @@ interface IProps {
 const PROVIDERS: { key: string; label: string; placeholder: string }[] = [
   { key: "gemini", label: "Gemini", placeholder: "AIza..." },
   { key: "openai", label: "OpenAI", placeholder: "sk-..." },
+  { key: "codex", label: "Codex Local", placeholder: "" },
   { key: "openrouter", label: "OpenRouter", placeholder: "sk-or-..." },
   { key: "fal", label: "fal.ai", placeholder: "key_id:key_secret" },
   { key: "byteplus", label: "BytePlus", placeholder: "ark-..." },
@@ -48,6 +49,7 @@ export default function SettingsModal({ settings, onClose, onSaved }: IProps) {
   const info = settings.providers?.[tab];
   const meta = PROVIDERS.find((p) => p.key === tab)!;
   const isActive = settings.provider === tab;
+  const usesLocalAuth = tab === "codex";
 
   const switchTab = (k: string) => {
     setTab(k);
@@ -133,19 +135,21 @@ export default function SettingsModal({ settings, onClose, onSaved }: IProps) {
           </TabsList>
         </Tabs>
 
-        <div className="field">
-          <Label>
-            {t("api_key", { provider: meta.label })} {isActive && <em className="not-italic text-primary">{t("in_use")}</em>}
-          </Label>
-          <Input
-            type="password"
-            placeholder={info?.hasKey ? t("saved_as", { preview: info.keyPreview }) : meta.placeholder}
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && saveKey()}
-            autoFocus
-          />
-        </div>
+        {!usesLocalAuth && (
+          <div className="field">
+            <Label>
+              {t("api_key", { provider: meta.label })} {isActive && <em className="not-italic text-primary">{t("in_use")}</em>}
+            </Label>
+            <Input
+              type="password"
+              placeholder={info?.hasKey ? t("saved_as", { preview: info.keyPreview }) : meta.placeholder}
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveKey()}
+              autoFocus
+            />
+          </div>
+        )}
 
         <div className="field">
           <Label>{t("image_model")}</Label>
@@ -189,7 +193,11 @@ export default function SettingsModal({ settings, onClose, onSaved }: IProps) {
 
         <p className="hint">
           {t(`help_${tab}`)}
-          <br />{t("key_local_note")}
+          {!usesLocalAuth && (
+            <>
+              <br />{t("key_local_note")}
+            </>
+          )}
         </p>
 
         {error && <p className="hint" style={{ color: "hsl(var(--destructive))" }}>{error}</p>}
@@ -205,10 +213,12 @@ export default function SettingsModal({ settings, onClose, onSaved }: IProps) {
               {t("use_provider")}
             </Button>
           )}
-          <Button onClick={saveKey} disabled={busy || !key.trim()}>
-            {busy && <Loader2 size={13} className="animate-spin" />}
-            {busy ? t("checking") : t("save_key")}
-          </Button>
+          {!usesLocalAuth && (
+            <Button onClick={saveKey} disabled={busy || !key.trim()}>
+              {busy && <Loader2 size={13} className="animate-spin" />}
+              {busy ? t("checking") : t("save_key")}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

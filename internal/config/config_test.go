@@ -44,6 +44,7 @@ func TestSettingsCfg(t *testing.T) {
 	s := Settings{
 		Gemini:     ProviderCfg{APIKey: "g"},
 		OpenAI:     ProviderCfg{APIKey: "ai"},
+		Codex:      ProviderCfg{Model: "gpt-image-2"},
 		OpenRouter: ProviderCfg{APIKey: "o"},
 		Fal:        ProviderCfg{APIKey: "f"},
 	}
@@ -55,6 +56,9 @@ func TestSettingsCfg(t *testing.T) {
 		t.Fatal("기본 폴백 오류")
 	}
 	// 포인터 반환이므로 수정이 반영되어야 함
+	if s.Cfg("codex").Model != "gpt-image-2" {
+		t.Fatal("codex provider settings mapping failed")
+	}
 	s.Cfg("fal").Model = "m"
 	if s.Fal.Model != "m" {
 		t.Fatal("Cfg는 포인터를 반환해야 합니다")
